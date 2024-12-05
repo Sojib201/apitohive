@@ -9,10 +9,11 @@ class ShowDataFromHive extends StatefulWidget {
 }
 
 class _ShowDataFromHiveState extends State<ShowDataFromHive> {
+  TextEditingController qtyController = TextEditingController();
   final dataBox = Hive.box('sojib');
   List<dynamic> data = [];
   List<dynamic> searchedData = [];
-  bool isSearching =false;
+  bool isSearching = false;
 
   TextEditingController searchController = TextEditingController();
 
@@ -28,11 +29,12 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
 
   void SearchField(String query) {
     if (query.isEmpty) {
-      searchedData=data;
+      searchedData = data;
     } else {
       //searchedData.clear();
-      isSearching=false;
-      searchedData = data.where((item) =>
+      isSearching = false;
+      searchedData = data
+          .where((item) =>
               item['title'].toLowerCase().contains(query.toLowerCase()))
           .toList();
     }
@@ -58,10 +60,8 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
           TextField(
             onChanged: (value) {
               SearchField(value);
-              isSearching=true;
-              setState(() {
-
-              });
+              isSearching = true;
+              setState(() {});
               // searchedData.clear();
               // isSearching=false;
               // setState(() {
@@ -83,23 +83,32 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                 ? Center(child: Text('No data available'))
                 : ListView.builder(
                     padding: EdgeInsets.all(10),
-                    itemCount:  isSearching?searchedData.length:data.length,
+                    itemCount: isSearching ? searchedData.length : data.length,
                     itemBuilder: (context, index) {
-                      List<dynamic> finalList=[];
-                      isSearching?finalList=searchedData:finalList=data;
+                      List<dynamic> finalList = [];
+                      isSearching ? finalList = searchedData : finalList = data;
 
                       return Card(
-                          color: Colors.grey,
-                          margin: EdgeInsets.symmetric(vertical: 10),
-                          child: ListTile(
-                            title: Text(
-                              finalList[index]['title'] ?? 'No Title',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                        color: Colors.grey,
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Row(
+                          children: [
+                            ListTile(
+                              title: Text(
+                                finalList[index]['title'] ?? 'No Title',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              subtitle:
+                                  Text(finalList[index]['body'] ?? 'No Body'),
                             ),
-                            subtitle: Text(finalList[index]['body'] ?? 'No Body'),
-                          ),
-                        );
+                            TextField(
+                              controller:qtyController,
+                              decoration: InputDecoration(),
+                            ),
+                          ],
+                        ),
+                      );
                     }),
           ),
           ElevatedButton(

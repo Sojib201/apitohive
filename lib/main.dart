@@ -4,9 +4,10 @@ import 'package:hive_flutter/adapters.dart';
 
 import 'fetchDataFrom Api.dart';
 
-void main() async{
+void main() async {
   await Hive.initFlutter();
   await Hive.openBox('sojib');
+  await Hive.openBox('newBox');
   runApp(const MyApp());
 }
 
@@ -20,12 +21,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple,background: Colors.grey),
         useMaterial3: true,
       ),
-      home:  FetchDataFromApi(),
+      home: FetchDataFromApi(),
     );
   }
 }
-

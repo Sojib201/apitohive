@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
+import 'fetchDataFrom Api.dart';
+
 class ShowDataFromHive extends StatefulWidget {
   const ShowDataFromHive({super.key});
 
@@ -11,14 +13,11 @@ class ShowDataFromHive extends StatefulWidget {
 class _ShowDataFromHiveState extends State<ShowDataFromHive> {
   TextEditingController qtyController = TextEditingController();
   final dataBox = Hive.box('sojib');
-  final newBox = Hive.box('newBox');
+
   //List<TextEditingController> controllers = [];
   final Map<String, TextEditingController> _controllers = {};
 
-
-  List<Map<String, dynamic>> mergedData=[];
-
-
+  List<Map<String, dynamic>> mergedData = [];
 
   List<dynamic> data = [];
   List<dynamic> searchedData = [];
@@ -33,9 +32,7 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
 
     for (var item in data) {
       _controllers[item['title']] = TextEditingController();
-
     }
-
 
     // controllers = List.generate(
     //   data.length,
@@ -43,23 +40,24 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
     // );
   }
 
-  void mergeData() {
-    List<dynamic> dataBoxData = dataBox.get('apiData');
-    List<dynamic> newBoxData = newBox.get('quantity');
-
-    mergedData = List.generate(dataBoxData.length, (index) {
-      return {
-        'title': dataBoxData[index]['title'],
-        'body': dataBoxData[index]['body'],
-        'quantity': index < newBoxData.length ? newBoxData[index] : null,
-      };
-    });
-
-    setState(() {});
-  }
-
   Future<void> getData() async {
     data = dataBox.get('apiData');
+  }
+
+  Future<void> mergeQuantityIntoData() async {
+    for (int i = 0; i < data.length; i++) {
+      data[i]['quantity'] = _controllers[data[i]["title"]]?.text.toString();
+    }
+
+    dataBox.put('apiData', data);
+
+    for (int i = 0; i < data.length; i++) {
+      _controllers[data[i]["title"]]?.text = '';
+    }
+
+    print(dataBox.get("apiData").toString());
+
+    setState(() {});
   }
 
   void SearchField(String query) {
@@ -84,10 +82,6 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
       setState(() {
         searchedData.removeAt(index);
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Searched item deleted successfully')),
-      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('No matching data to delete')),
@@ -116,13 +110,19 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //     mergeQuantityIntoData();
+      //   },
+      //   label: Text('Add'),
+      // ),
       body: Column(
         children: [
           SizedBox(
             height: 20,
           ),
           SizedBox(
-            width: 374,
+            width: 380,
             child: Card(
               elevation: 50,
               child: TextField(
@@ -157,12 +157,10 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                     padding: EdgeInsets.all(10),
                     itemCount: isSearching ? searchedData.length : data.length,
                     itemBuilder: (context, index) {
-
                       List<dynamic> finalList =
                           isSearching ? searchedData : data;
 
                       var controller = _controllers[finalList[index]['title']]!;
-
 
                       return Card(
                         elevation: 50,
@@ -184,31 +182,35 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                                   fontSize: 14,
                                 ),
                               ),
+                              trailing: ElevatedButton(
+                                onPressed: () async {
+                                  if (isSearching) {
+                                    await deleteElementFromList(index);
+                                  } else {
+                                    await data.removeAt(index);
+                                  }
+
+                                  setState(() {});
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white38,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 10),
                               child: TextField(
-                                // onChanged: (value) async {
-                                //   await newBox.put('quantity', value);
-                                //
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                //     SnackBar(content: Text('Quantity updated in Hive')),
-                                //   );
-                                // },
-
-                                onChanged: (value) async {
-                                  await newBox.put('quantity', value);
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Quantity updated in Hive'),
-                                    ),
-                                  );
-                                },
-
-                                controller:controller,
+                                controller: controller,
                                 decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(color: Colors.black),
@@ -226,68 +228,99 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              child: SizedBox(
-                                width: 400,
-                                height: 50,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    if (isSearching) {
-                                      await deleteElementFromList(index);
-                                    } else {
-                                      await data.removeAt(index);
-                                    }
-
-                                    setState(() {});
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    elevation: 15,
-                                    backgroundColor: Colors.red,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Delete',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.symmetric(
+                            //       horizontal: 10, vertical: 10),
+                            //   child: SizedBox(
+                            //     width: 400,
+                            //     height: 50,
+                            //     child: ElevatedButton(
+                            //       onPressed: () async {
+                            //         if (isSearching) {
+                            //           await deleteElementFromList(index);
+                            //         } else {
+                            //           await data.removeAt(index);
+                            //         }
+                            //
+                            //         setState(() {});
+                            //       },
+                            //       style: ElevatedButton.styleFrom(
+                            //         elevation: 15,
+                            //         backgroundColor: Colors.red,
+                            //         padding: EdgeInsets.symmetric(
+                            //             horizontal: 16, vertical: 12),
+                            //         shape: RoundedRectangleBorder(
+                            //           borderRadius: BorderRadius.circular(8),
+                            //         ),
+                            //       ),
+                            //       child: Text(
+                            //         'Delete',
+                            //         style: TextStyle(color: Colors.white),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       );
                     },
                   ),
           ),
-          SizedBox(
-            height: 50,
-            width: 365,
-            child: ElevatedButton(
-              onPressed: () async {
-                await deleteData();
-                setState(() {});
-              },
-              style: ElevatedButton.styleFrom(
-                elevation: 50,
-                backgroundColor: Colors.red,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+          Row(
+            children: [
+              Expanded(
+                flex: 50,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await deleteData();
+                      setState(() {});
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 50,
+                      backgroundColor: Colors.red,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Delete',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
               ),
-              child: Text(
-                'Delete All Data',
-                style: TextStyle(color: Colors.white),
+              SizedBox(
+                width: 10,
               ),
-            ),
-          ),
-          SizedBox(
-            height: 8,
+              Expanded(
+                flex: 50,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      mergeQuantityIntoData();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 50,
+                      backgroundColor: Colors.green,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Add',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

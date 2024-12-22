@@ -17,7 +17,7 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
   //List<TextEditingController> controllers = [];
   final Map<String, TextEditingController> _controllers = {};
 
-  List<Map<String, dynamic>> mergedData = [];
+
 
   List<dynamic> data = [];
   List<dynamic> searchedData = [];
@@ -72,7 +72,7 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
     }
   }
 
-  Future<void> deleteElementFromList(int index) async {
+  Future<void> deleteIndexData(int index) async {
     if (searchedData.isNotEmpty) {
       final itemToDelete = searchedData[index];
       data.remove(itemToDelete);
@@ -89,7 +89,7 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
     }
   }
 
-  Future<void> deleteData() async {
+  Future<void> deleteAllData() async {
     await dataBox.delete('apiData');
     data.clear();
   }
@@ -185,7 +185,7 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                               trailing: ElevatedButton(
                                 onPressed: () async {
                                   if (isSearching) {
-                                    await deleteElementFromList(index);
+                                    await deleteIndexData(index);
                                   } else {
                                     await data.removeAt(index);
                                   }
@@ -274,7 +274,7 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                   padding: const EdgeInsets.only(left: 8),
                   child: ElevatedButton(
                     onPressed: () async {
-                      await deleteData();
+                      await deleteAllData();
                       setState(() {});
                     },
                     style: ElevatedButton.styleFrom(

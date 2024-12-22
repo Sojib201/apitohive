@@ -17,8 +17,6 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
   //List<TextEditingController> controllers = [];
   final Map<String, TextEditingController> _controllers = {};
 
-
-
   List<dynamic> data = [];
   List<dynamic> searchedData = [];
   bool isSearching = false;

@@ -11,7 +11,7 @@ class ShowDataFromHive extends StatefulWidget {
 }
 
 class _ShowDataFromHiveState extends State<ShowDataFromHive> {
-  TextEditingController qtyController = TextEditingController();
+  //TextEditingController qtyController = TextEditingController();
   final dataBox = Hive.box('sojib');
 
   //List<TextEditingController> controllers = [];
@@ -28,9 +28,9 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
     super.initState();
     getData();
 
-    for (var item in data) {
-      _controllers[item['title']] = TextEditingController();
-    }
+    // for (var item in data) {
+    //   _controllers[item['title']] = TextEditingController();
+    // }
 
     // controllers = List.generate(
     //   data.length,
@@ -40,6 +40,23 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
 
   Future<void> getData() async {
     data = dataBox.get('apiData');
+
+    for (var item in data) {
+      _controllers[item['title']] =
+          TextEditingController(text: item['quantity'] ?? '');
+    }
+    setState(() {});
+  }
+
+  void saveQuantity(String title, String quantity) {
+    // Update the data and store it in Hive
+    for (var item in data) {
+      if (item['title'] == title) {
+        item['quantity'] = quantity; // Update quantity
+        break;
+      }
+    }
+    dataBox.put('apiData', data); // Save updated data to Hive
   }
 
   Future<void> mergeQuantityIntoData() async {
@@ -209,6 +226,11 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                                   horizontal: 10, vertical: 10),
                               child: TextField(
                                 controller: controller,
+                                onChanged: (value) {
+                                  // Save quantity in real-time
+                                  saveQuantity(
+                                      finalList[index]['title'], value);
+                                },
                                 decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(color: Colors.black),
@@ -301,6 +323,11 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                   child: ElevatedButton(
                     onPressed: () {
                       mergeQuantityIntoData();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FetchDataFromApi(),
+                          ));
                     },
                     style: ElevatedButton.styleFrom(
                       elevation: 50,

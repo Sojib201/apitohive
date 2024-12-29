@@ -31,7 +31,6 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
     // for (var item in data) {
     //   _controllers[item['title']] = TextEditingController();
     // }
-
   }
 
   Future<void> getData() async {
@@ -298,7 +297,7 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                       ),
                     ),
                     child: Text(
-                      'Delete',
+                      'Delete all Data',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -307,35 +306,35 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
               SizedBox(
                 width: 10,
               ),
-              Expanded(
-                flex: 50,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      mergeQuantityIntoData();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FetchDataFromApi(),
-                          ));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      elevation: 50,
-                      backgroundColor: Colors.green,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      'Add',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   flex: 50,
+              //   child: Padding(
+              //     padding: const EdgeInsets.only(right: 8),
+              //     child: ElevatedButton(
+              //       onPressed: () {
+              //         mergeQuantityIntoData();
+              //         Navigator.push(
+              //             context,
+              //             MaterialPageRoute(
+              //               builder: (context) => FetchDataFromApi(),
+              //             ));
+              //       },
+              //       style: ElevatedButton.styleFrom(
+              //         elevation: 50,
+              //         backgroundColor: Colors.green,
+              //         padding:
+              //             EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              //         shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(8),
+              //         ),
+              //       ),
+              //       child: Text(
+              //         'Add',
+              //         style: TextStyle(color: Colors.white),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],

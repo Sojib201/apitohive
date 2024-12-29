@@ -32,10 +32,6 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
     //   _controllers[item['title']] = TextEditingController();
     // }
 
-    // controllers = List.generate(
-    //   data.length,
-    //   (index) => TextEditingController(),
-    // );
   }
 
   Future<void> getData() async {
@@ -80,8 +76,11 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
     } else {
       isSearching = false;
       searchedData = data
-          .where((item) =>
-              item['title'].toLowerCase().contains(query.toLowerCase()))
+          .where(
+            (item) => item['title'].toLowerCase().contains(
+                  query.toLowerCase(),
+                ),
+          )
           .toList();
     }
   }
@@ -124,12 +123,6 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () {
-      //     mergeQuantityIntoData();
-      //   },
-      //   label: Text('Add'),
-      // ),
       body: Column(
         children: [
           SizedBox(

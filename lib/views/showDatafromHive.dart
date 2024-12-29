@@ -181,12 +181,12 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                           children: [
                             ListTile(
                               title: Text(
-                                finalList[index]['title'] ?? 'No Title',
+                                finalList[index]['title'],
                                 style: TextStyle(
                                     fontSize: 19, fontWeight: FontWeight.bold),
                               ),
                               subtitle: Text(
-                                finalList[index]['body'] ?? 'No Body',
+                                finalList[index]['body'],
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 14,

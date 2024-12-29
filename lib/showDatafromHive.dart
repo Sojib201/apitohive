@@ -52,7 +52,7 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
     for (var item in data) {
       if (item['title'] == title) {
         item['quantity'] = quantity;
-        break;
+        //break;
       }
     }
     dataBox.put('apiData', data);

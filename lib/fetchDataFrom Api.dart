@@ -21,6 +21,11 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
 
   Future<void> getData() async {
     data1 = await dataBox.get('apiData');
+
+    // Filter items
+    data1 = data1.where((item) => item['quantity'] != null).toList();
+
+    setState(() {});
   }
 
   Future<void> fetchData() async {

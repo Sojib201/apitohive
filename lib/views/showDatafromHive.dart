@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-import 'fetchDataFrom Api.dart';
-
 class ShowDataFromHive extends StatefulWidget {
   const ShowDataFromHive({super.key});
 
@@ -31,16 +29,22 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
     // for (var item in data) {
     //   _controllers[item['title']] = TextEditingController();
     // }
-  }
-
-  Future<void> getData() async {
-    data = dataBox.get('apiData');
 
     for (var item in data) {
       _controllers[item['title']] =
           TextEditingController(text: item['quantity'] ?? '');
     }
     setState(() {});
+  }
+
+  Future<void> getData() async {
+    data = dataBox.get('apiData');
+
+    // for (var item in data) {
+    //   _controllers[item['title']] =
+    //       TextEditingController(text: item['quantity'] ?? '');
+    // }
+    // setState(() {});
   }
 
   void saveQuantity(String title, String quantity) {

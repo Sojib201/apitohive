@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 
 import '../model/userDetails.dart';
 
-
 class FetchDataFromApi extends StatefulWidget {
   const FetchDataFromApi({super.key});
 

@@ -1,10 +1,13 @@
 import 'dart:convert';
 
-import 'package:apitohive/showDatafromHive.dart';
+import 'package:apitohive/views/showDatafromHive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+
+import '../model/userDetails.dart';
+
 
 class FetchDataFromApi extends StatefulWidget {
   const FetchDataFromApi({super.key});
@@ -28,7 +31,7 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
     setState(() {});
   }
 
-  Future<void> fetchData() async {
+  Future<UserDetails?> fetchData() async {
     String url = 'https://jsonplaceholder.typicode.com/posts';
     try {
       Uri uri = Uri.parse(url);

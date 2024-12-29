@@ -1,8 +1,8 @@
+import 'package:apitohive/views/fetchDataFrom%20Api.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 
-import 'fetchDataFrom Api.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

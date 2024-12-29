@@ -49,14 +49,13 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
   }
 
   void saveQuantity(String title, String quantity) {
-    // Update the data and store it in Hive
     for (var item in data) {
       if (item['title'] == title) {
-        item['quantity'] = quantity; // Update quantity
+        item['quantity'] = quantity;
         break;
       }
     }
-    dataBox.put('apiData', data); // Save updated data to Hive
+    dataBox.put('apiData', data);
   }
 
   Future<void> mergeQuantityIntoData() async {
@@ -227,7 +226,6 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                               child: TextField(
                                 controller: controller,
                                 onChanged: (value) {
-                                  // Save quantity in real-time
                                   saveQuantity(
                                       finalList[index]['title'], value);
                                 },

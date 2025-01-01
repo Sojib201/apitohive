@@ -16,7 +16,7 @@ class FetchDataFromApi extends StatefulWidget {
 }
 
 class _FetchDataFromApiState extends State<FetchDataFromApi> {
-  final dataBox = Hive.box('sojib');
+  final dataBox = Hive.box('sojib'); gjyhg
   List<dynamic> data1 = [];
 
   bool isLoading = false;

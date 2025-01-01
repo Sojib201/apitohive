@@ -25,7 +25,9 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
     data1 = await dataBox.get('apiData');
 
     // Filter items
-    data1 = data1.where((item) => item['quantity'] != null).toList();
+    data1 = data1
+        .where((item) => item['quantity'] != null && item['quantity'] != '')
+        .toList();
 
     setState(() {});
   }

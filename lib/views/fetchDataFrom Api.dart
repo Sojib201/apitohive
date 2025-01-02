@@ -230,15 +230,13 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
 
                           child: TextField(
                             controller: TextEditingController(
-                              text: item['quantity']?.toString() ??
-                                  '', // Display the quantity
+                              text: item['quantity']?.toString() ?? '',
                             ),
                             onChanged: (value) {
-                              setState(() {
-                                item['quantity'] = value; // Update local data
-                              });
-                              dataBox.put('apiData',
-                                  dataBox); // Save updated data to Hive
+                              item['quantity'] = value;
+
+                              // dataBox.put('apiData',
+                              //     dataBox);
                             },
                             decoration: InputDecoration(
                               focusedBorder: OutlineInputBorder(

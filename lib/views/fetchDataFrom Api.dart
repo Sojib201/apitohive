@@ -19,17 +19,24 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
   final dataBox = Hive.box('sojib');
   List<dynamic> filterData = [];
 
-
   bool isLoading = false;
 
-  Future<void> getData() async {
-    final data = await dataBox.get('apiData');
+  // Future<void> getData() async {
+  //   final data = await dataBox.get('apiData');
+  //
+  //   // Filter items
+  //   filterData = data
+  //       .where((item) => item['quantity'] != null && item['quantity'] != '')
+  //       .toList();
+  //
+  //   setState(() {});
+  // }
 
-    // Filter items
+  Future<void> getData() async {
+    final data = dataBox.get('apiData') ?? [];
     filterData = data
         .where((item) => item['quantity'] != null && item['quantity'] != '')
         .toList();
-
     setState(() {});
   }
 
@@ -191,7 +198,7 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
                               fontSize: 14,
                             ),
                           ),
-                          // trailing: Text(
+                          // leading: Text(
                           //   item['quantity'] ?? 'No Quantity',
                           //   style: TextStyle(
                           //     color: Colors.black,
@@ -220,7 +227,19 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 10),
+
                           child: TextField(
+                            controller: TextEditingController(
+                              text: item['quantity']?.toString() ??
+                                  '', // Display the quantity
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                item['quantity'] = value; // Update local data
+                              });
+                              dataBox.put('apiData',
+                                  dataBox); // Save updated data to Hive
+                            },
                             decoration: InputDecoration(
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.black),
@@ -228,7 +247,7 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
                               ),
                               fillColor: Colors.white38,
                               filled: true,
-                              //hintText: "Enter Quantity",
+                              hintText: "Enter Quantity",
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.black),
                                 borderRadius: BorderRadius.circular(8),
@@ -237,6 +256,24 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
                                   horizontal: 12, vertical: 8),
                             ),
                           ),
+
+                          // child: TextField(
+                          //   decoration: InputDecoration(
+                          //     focusedBorder: OutlineInputBorder(
+                          //       borderSide: BorderSide(color: Colors.black),
+                          //       borderRadius: BorderRadius.circular(12),
+                          //     ),
+                          //     fillColor: Colors.white38,
+                          //     filled: true,
+                          //     //hintText: "Enter Quantity",
+                          //     border: OutlineInputBorder(
+                          //       borderSide: BorderSide(color: Colors.black),
+                          //       borderRadius: BorderRadius.circular(8),
+                          //     ),
+                          //     contentPadding: EdgeInsets.symmetric(
+                          //         horizontal: 12, vertical: 8),
+                          //   ),
+                          // ),
                         ),
                       ],
                     ),

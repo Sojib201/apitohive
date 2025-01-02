@@ -25,33 +25,27 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
   void initState() {
     super.initState();
     getData();
-
-    // for (var item in data) {
-    //   _controllers[item['title']] = TextEditingController();
-    // }
-
-    for (var item in data) {
-      _controllers[item['title']] =
-          TextEditingController(text: item['quantity'] ?? '');
-    }
-    setState(() {});
   }
 
   Future<void> getData() async {
-    data = dataBox.get('apiData');
+    data = dataBox.get('apiData', defaultValue: []);
 
-    // for (var item in data) {
-    //   _controllers[item['title']] =
-    //       TextEditingController(text: item['quantity'] ?? '');
-    // }
-    // setState(() {});
+    if (data.isEmpty) {
+      print('No data found in Hive');
+    } else {
+      for (var item in data) {
+        _controllers[item['title']] =
+            TextEditingController(text: item['quantity'] ?? '');
+      }
+    }
+
+    setState(() {});
   }
 
   void saveQuantity(String title, String quantity) {
     for (var item in data) {
       if (item['title'] == title) {
         item['quantity'] = quantity;
-        //break;
       }
     }
     dataBox.put('apiData', data);
@@ -242,6 +236,7 @@ class _ShowDataFromHiveState extends State<ShowDataFromHive> {
                                 ),
                               ),
                             ),
+
                             // Padding(
                             //   padding: const EdgeInsets.symmetric(
                             //       horizontal: 10, vertical: 10),

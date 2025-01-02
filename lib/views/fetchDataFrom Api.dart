@@ -17,19 +17,36 @@ class FetchDataFromApi extends StatefulWidget {
 
 class _FetchDataFromApiState extends State<FetchDataFromApi> {
   final dataBox = Hive.box('sojib');
-  List<dynamic> data1 = [];
+  List<dynamic> filterData = [];
+
 
   bool isLoading = false;
 
   Future<void> getData() async {
-    data1 = await dataBox.get('apiData');
+    final data = await dataBox.get('apiData');
 
     // Filter items
-    data1 = data1
+    filterData = data
         .where((item) => item['quantity'] != null && item['quantity'] != '')
         .toList();
 
     setState(() {});
+  }
+
+  void removeDataAndQuantity(Map<dynamic, dynamic> item) async {
+    setState(() {
+      filterData.remove(item);
+    });
+
+    final data = dataBox.get('apiData');
+    for (var i in data) {
+      if (i['title'] == item['title']) {
+        i['quantity'] = null;
+        break;
+      }
+    }
+
+    await dataBox.put('apiData', data);
   }
 
   Future<UserDetails?> fetchData() async {
@@ -152,33 +169,76 @@ class _FetchDataFromApiState extends State<FetchDataFromApi> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: data1.length,
+                itemCount: filterData.length,
                 itemBuilder: (context, index) {
-                  final item = data1[index];
+                  final item = filterData[index];
                   return Card(
                     elevation: 50,
                     color: Colors.grey,
                     margin: const EdgeInsets.all(8),
-                    child: ListTile(
-                      title: Text(
-                        item['title'] ?? 'No Title',
-                        style: TextStyle(
-                            fontSize: 19, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        item['body'] ?? 'No Body',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            item['title'] ?? 'No Title',
+                            style: TextStyle(
+                                fontSize: 19, fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            item['body'] ?? 'No Body',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          ),
+                          // trailing: Text(
+                          //   item['quantity'] ?? 'No Quantity',
+                          //   style: TextStyle(
+                          //     color: Colors.black,
+                          //     fontSize: 14,
+                          //   ),
+                          // ),
+
+                          trailing: ElevatedButton(
+                            onPressed: () {
+                              removeDataAndQuantity(item);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white38,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          ),
                         ),
-                      ),
-                      trailing: Text(
-                        item['quantity'] ?? 'No Quantity',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              fillColor: Colors.white38,
+                              filled: true,
+                              //hintText: "Enter Quantity",
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   );
                 },
